@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ts/server/server.ts",
+    "start": "node js/server/server.js",
     "dev": "nodemon ts/server/server.ts",
     "build": "tsc -p .",
     "fork": "nodemon js/server/server.js",
