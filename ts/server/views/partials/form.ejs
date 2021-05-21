@@ -1,0 +1,22 @@
+<h1 class="text-center fw-bolder">Ingrese un Producto</h1>
+            <form method="post" enctype="application/x-www-form-urlencoded" id="form">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Titulo</label>
+                    <input type="text" class="form-control" name="title" id="title">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Precio</label>
+                    <input type="number" class="form-control" name="price" id="price">
+                </div>
+                <div class="mb-3">
+                    <label for="thumbnail" class="form-label">Thumbnail</label>
+                    <input type="text" class="form-control" name="thumbnail" id="thumbnail">
+                </div>
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <button class="btn btn-success" type="submit">Enviar Producto</button>
+                </div>
+            </form>
+            <br>
+            <div id="errores" class="alert alert-warning" role="alert" style="display: none;">
+                
+            </div>

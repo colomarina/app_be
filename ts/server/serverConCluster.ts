@@ -1,0 +1,102 @@
+import express from "express";
+import routerProductos from "../routes/productos.routes";
+import routerSession from "../routes/session.routes";
+import routerForExercise from "../routes/forExercise.routes";
+import session from 'express-session';
+import cookieParser from "cookie-parser";
+import path = require("path");
+import { fechayhora } from "../routes/constantes";
+import { agregarMensaje, connect, traerMensajes } from "../db/index.db";
+import { inicializarPassport, sessionPassport } from "../config/passport.config";
+import { sessionConfig } from "../config/session.config";
+import { logger } from "../config/winston.config";
+import cluster from "cluster";
+import { cpus } from "os";
+const numCPUs = require('os').cpus().length
+
+const app = express();
+const http = require("http").Server(app);
+export const io = require("socket.io")(http);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
+app.use(session(sessionConfig))
+app.use(inicializarPassport);
+app.use(sessionPassport);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
+app.use("/api", routerProductos);
+app.use("/exercise", routerForExercise);
+app.use("/", routerSession);
+
+io.on("connection", (socket: any) => {
+  logger.info(`ID: ${socket.id}`);
+  traerMensajes()
+    .then((mensajes: any) => {
+      mensajes.length === 0
+        ? logger.info("No hay mensajes en la DB")
+        : socket.emit("mensajes", mensajes);
+    })
+    .catch((error: any) => {
+      logger.error(error)
+    });
+  socket.on("mensaje", (messag: any) => {
+    const { mail, nombre, apellido, edad, alias, avatar, message } = messag;
+    const mensaje = { 
+      mail: mail,
+      nombre: nombre, 
+      apellido: apellido, 
+      edad: edad,
+      alias: alias,
+      avatar: avatar,
+      dateandhour: fechayhora(),
+      message: message};
+    agregarMensaje(mensaje)
+      .then(() => {
+        traerMensajes()
+          .then((mensajes: any) => {
+            mensajes.length === 0
+              ? logger.info("No hay mensajes")
+              : io.emit("mensajes", mensajes);
+          })
+          .catch((error: any) => {
+            logger.error(error)
+          });
+      })
+      .catch((error: any) => {
+        logger.error(error)
+      });
+  });
+});
+
+
+declare module "express-session" {
+  interface Session {
+    user: string;
+  }
+}
+
+if (cluster.isMaster) {
+  console.log(numCPUs)
+  console.log(`PID MASTER ${process.pid}`)
+
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork()
+  }
+
+  cluster.on('exit', (worker) => {
+    console.log('Worker', worker.process.pid, 'died', new Date().toLocaleString())
+    cluster.fork()
+  })
+}
+else {
+  const port = process.argv[2] || 8081;
+  const server = http.listen(port, () => {
+    connect()
+          .then(() => {
+            logger.info(`El servidor se encuentra en el puerto: ${port} y se conecto correctamente a MongoAtlas DB ecommerce`)
+          })
+          .catch((err) => logger.error(err));
+  });
+}
