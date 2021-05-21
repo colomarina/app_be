@@ -1,11 +1,12 @@
 const express = require('express');
 const app = express();
-const port = 8080;
+const PORT = process.env.PORT || 8080;
 
 app.get('/mensaje', (req, res) => {
-  res.send('Hola colito!')
+  res.send('Hola colito desde Heroku!')
 })
 
-app.listen(port, () => {
-  console.log(`App listening in port: ${port}`)
+const server = app.listen(PORT, () => {
+  console.log(`Server listening in port: ${PORT}`)
 })
+server.on('error', error => console.log(`Error server: ${error}`))
