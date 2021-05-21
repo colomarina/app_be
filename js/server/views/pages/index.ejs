@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/header')%>
+</head>
+<body class="container">
+    <br>
+    <%- include('../partials/titulo_usuario')%>
+    <%- include('../partials/chat')%>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function renderChat(messages) {
+            let div = document.getElementById('lista_mensajes');
+            div.innerHTML = '';
+            let mensajes = '';
+            messages.forEach((mensaje) => {
+                mensajes += `<p>
+                    <span style="color: blue;font-weight: bold;">${mensaje.mail}</span>
+                    [<span style="color: maroon">${mensaje.dateandhour}</span>]:
+                    <span style="color: green;font-style: italic;">${mensaje.message}</span>
+                    
+                    </p>
+                `
+            })
+            div.innerHTML = mensajes;
+        }
+
+        let inputValuesChat = {
+            mail: '',
+            nombre: '',
+            apellido: '',
+            edad: '',
+            alias: '',
+            avatar: '',
+            message: ''
+        }
+
+        let msg = ''
+        const inputs = document.querySelectorAll('input');
+        const errores = document.querySelector('#errores');
+        const errores_chat = document.querySelector('#errores_chat');
+        const lista_mensajes = document.querySelector('#lista_mensajes');
+        
+        inputs.forEach(input => {
+            input.addEventListener('input', e => {
+                if ((e.target.name === 'mail') || (e.target.name === 'nombre') || (e.target.name === 'apellido') || (e.target.name === 'edad') || (e.target.name === 'alias') || (e.target.name === 'avatar') || (e.target.name === 'message')) {
+                    inputValuesChat = {...inputValuesChat, [e.target.name]: e.target.value};
+                }
+          })
+        })
+
+        const socket = io();
+
+        document.querySelector('#form-chat').addEventListener('submit', e => {
+            e.preventDefault()
+            if ((inputValuesChat.mail !== '') && (inputValuesChat.message !== '')) {
+                document.querySelector('#errores_chat').style.display = "none";
+                const { mail, nombre, apellido, edad, alias, avatar, message } = inputValuesChat;
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                socket.emit('mensaje', inputValuesChat);
+                inputValuesChat = {
+                    mail: '',
+                    nombre: '',
+                    apellido: '',
+                    edad: '',
+                    alias: '',
+                    avatar: '',
+                    message: ''
+                }
+            } else {
+                document.querySelector('#errores_chat').style.display = "block";
+                msg = '<p>Mensaje no enviado, complete los siguientes campos</p>';
+                inputs.forEach(input => {
+                    if (input.value === '') {
+                        switch (input.name) {
+                            case 'mail':
+                                msg += `<p> - Correo electronico</p>`;
+                                document.querySelector('#mail').focus();
+                                break;
+                            case 'message':
+                                msg += `<p> - Mensaje</p>`;
+                                document.querySelector('#message').focus();
+                                break;
+                        }
+                    }
+                })
+                errores_chat.innerHTML = msg;
+
+            }
+        })
+
+        socket.on('mensajes', (messages) => {
+            renderChat(messages)
+        })
+    </script>
+</body>
+</html>
