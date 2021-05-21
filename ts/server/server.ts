@@ -76,11 +76,12 @@ declare module "express-session" {
   }
 }
 
-const port = process.argv[2] || 8080;
-const server = http.listen(port, () => {
+// const port = process.argv[2] || 8080;
+const PORT =  process.env.PORT || 8080;
+const server = http.listen(PORT, () => {
   connect()
         .then(() => {
-          logger.info(`El servidor se encuentra en el puerto: ${port} y se conecto correctamente a MongoAtlas DB ecommerce`)
+          logger.info(`El servidor se encuentra en el puerto: ${PORT} y se conecto correctamente a MongoAtlas DB ecommerce`)
         })
         .catch((err) => logger.error(err));
 });
