@@ -1,2 +1,4 @@
-# app_be
-App Backend
+# App Backend
+
+Curso de CoderHouse
+Programación Backend!
