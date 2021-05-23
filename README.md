@@ -1,4 +1,3 @@
 # App Backend
 
-Curso de CoderHouse
-Programación Backend!
+Curso de CoderHouse - Programación Backend!
