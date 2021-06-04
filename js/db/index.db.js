@@ -13,12 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidPassword = exports.createHash = exports.agregarMensaje = exports.traerMensajes = exports.traerProductosXRangoPrecios = exports.traerProductosXNombres = exports.eliminarProducto = exports.actualizarProducto = exports.agregarProducto = exports.traerProducto = exports.traerProductos = exports.connect = void 0;
+require('dotenv').config();
 const mongoose_1 = __importDefault(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mensajes_model_1 = require("./models/mensajes.model");
 const producto_model_1 = require("./models/producto.model");
 // 'mongodb+srv://colito:LM753951@cluster0.yjnag.mongodb.net/ecommerce' 
-const conn = mongoose_1.default.connect('mongodb+srv://colito:LM753951@cluster0.yjnag.mongodb.net/ecommerce?retryWrites=true&w=majority', {
+const conn = mongoose_1.default.connect(process.env.MONGO_URL || '', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

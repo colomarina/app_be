@@ -5,9 +5,7 @@ import { userModel } from "../db/models/user.model";
 import { userFacebookModel } from '../db/models/userFacebook.model';
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-
-const FACEBOOK_CLIENT_ID = '1833584373478234';
-const FACEBOOK_CLIENT_SECRET = 'c64f741c6c4e75fdd580162fd59d3d86';
+require('dotenv').config()
 
 passport.use('login', new LocalStrategy(
   {
@@ -69,8 +67,8 @@ passport.use('singup', new LocalStrategy(
 );
 
 passport.use(new FacebookStrategy({
-  clientID: FACEBOOK_CLIENT_ID,
-  clientSecret: FACEBOOK_CLIENT_SECRET,
+  clientID: process.env.FACEBOOK_CLIENT_ID,
+  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
   callbackURL: "http://localhost:8080/auth/facebook/callback",
   profileFields: ['id', 'displayName', 'email' , 'picture.type(large)'],
   scope: ["email"],
@@ -84,7 +82,6 @@ passport.use(new FacebookStrategy({
       }
       if (user) {
         // console.log('User already exists, login succesfully');
-        
         return cb(null, user)
       } else {
         let newUser = new userFacebookModel();

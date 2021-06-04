@@ -10,8 +10,7 @@ const user_model_1 = require("../db/models/user.model");
 const userFacebook_model_1 = require("../db/models/userFacebook.model");
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const FACEBOOK_CLIENT_ID = '1833584373478234';
-const FACEBOOK_CLIENT_SECRET = 'c64f741c6c4e75fdd580162fd59d3d86';
+require('dotenv').config();
 passport_1.default.use('login', new LocalStrategy({
     passReqToCallback: true
 }, (req, username, password, done) => {
@@ -65,8 +64,8 @@ passport_1.default.use('singup', new LocalStrategy({
     process.nextTick(findOrCreateUser);
 }));
 passport_1.default.use(new FacebookStrategy({
-    clientID: FACEBOOK_CLIENT_ID,
-    clientSecret: FACEBOOK_CLIENT_SECRET,
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     callbackURL: "http://localhost:8080/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'email', 'picture.type(large)'],
     scope: ["email"],

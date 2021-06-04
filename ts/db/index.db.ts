@@ -1,3 +1,4 @@
+require('dotenv').config()
 import mongoose from 'mongoose';
 import bCrypt from  "bcrypt";
 import { Mensaje, Producto } from "../routes/objetos";
@@ -6,7 +7,7 @@ import { productoModel } from './models/producto.model';
 
 // 'mongodb+srv://colito:LM753951@cluster0.yjnag.mongodb.net/ecommerce' 
 const conn = mongoose.connect(
-  'mongodb+srv://colito:LM753951@cluster0.yjnag.mongodb.net/ecommerce?retryWrites=true&w=majority', {
+  process.env.MONGO_URL || '', {
       useNewUrlParser: true,
       useUnifiedTopology: true
   }

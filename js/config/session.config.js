@@ -4,17 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sessionConfig = void 0;
+require('dotenv').config();
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 exports.sessionConfig = {
     store: connect_mongo_1.default.create({
-        mongoUrl: 'mongodb+srv://colito:LM753951@cluster0.yjnag.mongodb.net/ecommerce?retryWrites=true&w=majority',
+        mongoUrl: process.env.MONGO_URL,
         mongoOptions: {
             useNewUrlParser: true,
             useUnifiedTopology: true
         },
         ttl: 600
     }),
-    secret: 'kira753951',
+    secret: process.env.MONGO_SECRET_KEY || '',
     resave: false,
     saveUninitialized: false,
     rolling: false,

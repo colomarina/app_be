@@ -17,6 +17,8 @@ const index_db_1 = require("../db/index.db");
 const passport_config_1 = require("../config/passport.config");
 const session_config_1 = require("../config/session.config");
 const winston_config_1 = require("../config/winston.config");
+const message_1 = require("../service/message");
+require('dotenv').config();
 const app = express_1.default();
 const http = require("http").Server(app);
 exports.io = require("socket.io")(http);
@@ -55,6 +57,9 @@ exports.io.on("connection", (socket) => {
             dateandhour: constantes_1.fechayhora(),
             message: message
         };
+        if (message.includes('administrador')) {
+            message_1.sendSMS(message);
+        }
         index_db_1.agregarMensaje(mensaje)
             .then(() => {
             index_db_1.traerMensajes()
@@ -72,11 +77,11 @@ exports.io.on("connection", (socket) => {
         });
     });
 });
-const port = process.argv[2] || 8080;
-const server = http.listen(port, () => {
+const PORT = process.env.PORT || 8080;
+const server = http.listen(PORT, () => {
     index_db_1.connect()
         .then(() => {
-        winston_config_1.logger.info(`El servidor se encuentra en el puerto: ${port} y se conecto correctamente a MongoAtlas DB ecommerce`);
+        winston_config_1.logger.info(`El servidor se encuentra en el puerto: ${PORT} y se conecto correctamente a MongoAtlas DB ecommerce`);
     })
         .catch((err) => winston_config_1.logger.error(err));
 });

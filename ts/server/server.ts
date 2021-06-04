@@ -11,6 +11,8 @@ import { agregarMensaje, connect, traerMensajes } from "../db/index.db";
 import { inicializarPassport, sessionPassport } from "../config/passport.config";
 import { sessionConfig } from "../config/session.config";
 import { logger } from "../config/winston.config";
+import { sendSMS } from "../service/message";
+require('dotenv').config()
 
 const app = express();
 const http = require("http").Server(app);
@@ -42,17 +44,22 @@ io.on("connection", (socket: any) => {
     });
   socket.on("mensaje", (messag: any) => {
     const { mail, nombre, apellido, edad, alias, avatar, message } = messag;
-    const mensaje = { 
+    const mensaje = {
       mail: mail,
-      nombre: nombre, 
-      apellido: apellido, 
+      nombre: nombre,
+      apellido: apellido,
       edad: edad,
       alias: alias,
       avatar: avatar,
       dateandhour: fechayhora(),
-      message: message};
+      message: message
+    };
+    if (message.includes('administrador')) {
+      sendSMS(message)
+    }
     agregarMensaje(mensaje)
       .then(() => {
+
         traerMensajes()
           .then((mensajes: any) => {
             mensajes.length === 0
@@ -76,12 +83,11 @@ declare module "express-session" {
   }
 }
 
-// const port = process.argv[2] || 8080;
-const PORT =  process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 const server = http.listen(PORT, () => {
   connect()
-        .then(() => {
-          logger.info(`El servidor se encuentra en el puerto: ${PORT} y se conecto correctamente a MongoAtlas DB ecommerce`)
-        })
-        .catch((err) => logger.error(err));
+    .then(() => {
+      logger.info(`El servidor se encuentra en el puerto: ${PORT} y se conecto correctamente a MongoAtlas DB ecommerce`)
+    })
+    .catch((err) => logger.error(err));
 });
