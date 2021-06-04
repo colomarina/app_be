@@ -66,7 +66,7 @@ passport_1.default.use('singup', new LocalStrategy({
 passport_1.default.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_CLIENT_ID,
     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/facebook/callback",
+    callbackURL: "/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'email', 'picture.type(large)'],
     scope: ["email"],
     enableProof: true,
