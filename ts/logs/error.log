@@ -1,0 +1,13 @@
+{"level":"error"}
+{"message":{"error":"1","descripcion":"Debe rellenar todos los campos..."},"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"operationTime":"6972011744352796674","ok":0,"code":9,"codeName":"FailedToParse","$clusterTime":{"clusterTime":"6972011744352796674","signature":{"hash":"bJOvEgQ2rTVodlfcS8TQmqieARE=","keyId":"6945531527216234500"}},"name":"MongoError","level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"status":400,"code":21211,"moreInfo":"https://www.twilio.com/docs/errors/21211","level":"error"}

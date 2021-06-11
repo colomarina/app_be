@@ -1,5 +1,7 @@
+require('dotenv').config()
 import express from "express";
 import compression from 'compression';
+import mainRouter from "../routes/index";
 import routerProductos from "../routes/productos.routes";
 import routerSession from "../routes/session.routes";
 import routerForExercise from "../routes/forExercise.routes";
@@ -12,7 +14,7 @@ import { inicializarPassport, sessionPassport } from "../config/passport.config"
 import { sessionConfig } from "../config/session.config";
 import { logger } from "../config/winston.config";
 import { sendSMS } from "../service/message";
-require('dotenv').config()
+const passport = require('passport');
 
 const app = express();
 const http = require("http").Server(app);
@@ -27,9 +29,8 @@ app.use(inicializarPassport);
 app.use(sessionPassport);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
-app.use("/api", routerProductos);
-app.use("/exercise", routerForExercise);
-app.use("/", routerSession);
+app.use('/', mainRouter)
+
 
 io.on("connection", (socket: any) => {
   logger.info(`ID: ${socket.id}`);

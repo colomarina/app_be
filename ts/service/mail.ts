@@ -19,7 +19,23 @@ const transporterGmail = nodemailer.createTransport({
   }
 });
 
+const enviarMailEthereal = ({ a, asunto, html}: any) => {
+  transporterEthereal.sendMail({
+    from: 'Servidor Node.js',
+    to: a,
+    subject: `Operacion ${asunto}`,
+    html: html
+  }, (err, info) => {
+    if (err) {
+      console.log(err)
+      return err
+    }
+    console.log(info)
+  })
+}
+
 export {
   transporterEthereal,
-  transporterGmail
+  transporterGmail,
+  enviarMailEthereal
 }

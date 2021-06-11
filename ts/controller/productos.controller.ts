@@ -53,7 +53,7 @@ module.exports = {
     // Listar 1 producto x su id
     traerProducto(req.params.producto_id)
       .then((producto: String) => {
-        (producto !== null) ? res.send(producto) : res.json({ Error: 'Producto inexistente' });
+        (producto !== null) ? res.json(producto) : res.json({ Error: 'Producto inexistente' });
       })
       .catch((error: any) => {
         mensaje_error.error = `Error en el ${error.path}`;

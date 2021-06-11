@@ -4,11 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.io = void 0;
+require('dotenv').config();
 const express_1 = __importDefault(require("express"));
 const compression_1 = __importDefault(require("compression"));
-const productos_routes_1 = __importDefault(require("../routes/productos.routes"));
-const session_routes_1 = __importDefault(require("../routes/session.routes"));
-const forExercise_routes_1 = __importDefault(require("../routes/forExercise.routes"));
+const index_1 = __importDefault(require("../routes/index"));
 const express_session_1 = __importDefault(require("express-session"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const path = require("path");
@@ -18,7 +17,7 @@ const passport_config_1 = require("../config/passport.config");
 const session_config_1 = require("../config/session.config");
 const winston_config_1 = require("../config/winston.config");
 const message_1 = require("../service/message");
-require('dotenv').config();
+const passport = require('passport');
 const app = express_1.default();
 const http = require("http").Server(app);
 exports.io = require("socket.io")(http);
@@ -31,9 +30,7 @@ app.use(passport_config_1.inicializarPassport);
 app.use(passport_config_1.sessionPassport);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
-app.use("/api", productos_routes_1.default);
-app.use("/exercise", forExercise_routes_1.default);
-app.use("/", session_routes_1.default);
+app.use('/', index_1.default);
 exports.io.on("connection", (socket) => {
     winston_config_1.logger.info(`ID: ${socket.id}`);
     index_db_1.traerMensajes()

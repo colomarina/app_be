@@ -50,7 +50,7 @@ module.exports = {
         // Listar 1 producto x su id
         index_db_1.traerProducto(req.params.producto_id)
             .then((producto) => {
-            (producto !== null) ? res.send(producto) : res.json({ Error: 'Producto inexistente' });
+            (producto !== null) ? res.json(producto) : res.json({ Error: 'Producto inexistente' });
         })
             .catch((error) => {
             constantes_1.mensaje_error.error = `Error en el ${error.path}`;

@@ -1,39 +1,21 @@
 import { Router } from "express";
 import passport from "passport";
-const session = require( "../controller/session.controller");
+const { login, signup, getProfile, logout, loginFacebook } = require('../controller/login');
 let routerSession = Router();
 
-// Passport
-routerSession.get("/", session.goLogin);
+routerSession.post("/singup", passport.authenticate('signup', { session: false }), login);
 
-// LOGIN
-routerSession.get("/login", session.getLogin);
+routerSession.post("/login", signup);
 
-routerSession.post("/login", passport.authenticate('login', {
-  failureRedirect: 'faillogin'
-}) ,session.postLogin);
+routerSession.post("/logout", logout);
 
-routerSession.get("/faillogin", session.getFaillogin);
-// REGISTER
-routerSession.get("/register", session.getSingup);
+routerSession.get("/profile", passport.authenticate('jwt', { session: false }), getProfile );
 
-routerSession.post("/register", passport.authenticate('singup', {
-  failureRedirect: 'failsingup'
-}) ,session.postSingup);
-
-routerSession.get("/failsingup", session.getFailsingup);
-// LOGOUT
-routerSession.get("/logout", session.getLogout);
 // LOGIN CON FACEBOOK
 routerSession.get("/auth/facebook", passport.authenticate('facebook'));
 
 routerSession.get("/auth/facebook/callback", passport.authenticate('facebook', {
   failureRedirect: '/login'
-}), session.getLoginFacebook);
-// FAIL ROUTE
-routerSession.get("*", session.failRoute);
-
-
-
+}), loginFacebook);
 
 export default routerSession;
