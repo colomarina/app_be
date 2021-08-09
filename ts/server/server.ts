@@ -1,25 +1,23 @@
-require('dotenv').config()
 import express from "express";
 import compression from 'compression';
 import mainRouter from "../routes/index";
-import routerProductos from "../routes/productos.routes";
-import routerSession from "../routes/session.routes";
-import routerForExercise from "../routes/forExercise.routes";
 import session from 'express-session';
 import cookieParser from "cookie-parser";
 import path = require("path");
 import { fechayhora } from "../routes/constantes";
-import { agregarMensaje, connect, traerMensajes } from "../db/index.db";
+import model from '../db/index.db'
 import { inicializarPassport, sessionPassport } from "../config/passport.config";
 import { sessionConfig } from "../config/session.config";
 import { logger } from "../config/winston.config";
 import { sendSMS } from "../service/message";
-const passport = require('passport');
 
+const cors = require('cors')
+const config = require('../config/config')
 const app = express();
 const http = require("http").Server(app);
 export const io = require("socket.io")(http);
 
+app.use(cors());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,7 +32,7 @@ app.use('/', mainRouter)
 
 io.on("connection", (socket: any) => {
   logger.info(`ID: ${socket.id}`);
-  traerMensajes()
+  model?.traerMensajes()
     .then((mensajes: any) => {
       mensajes.length === 0
         ? logger.info("No hay mensajes en la DB")
@@ -58,10 +56,9 @@ io.on("connection", (socket: any) => {
     if (message.includes('administrador')) {
       sendSMS(message)
     }
-    agregarMensaje(mensaje)
+    model?.agregarMensaje(mensaje)
       .then(() => {
-
-        traerMensajes()
+        model?.traerMensajes()
           .then((mensajes: any) => {
             mensajes.length === 0
               ? logger.info("No hay mensajes")
@@ -84,11 +81,8 @@ declare module "express-session" {
   }
 }
 
-const PORT = process.env.PORT || 8080;
+const PORT = config.PORT;
 const server = http.listen(PORT, () => {
-  connect()
-    .then(() => {
-      logger.info(`El servidor se encuentra en el puerto: ${PORT} y se conecto correctamente a MongoAtlas DB ecommerce`)
-    })
-    .catch((err) => logger.error(err));
+  logger.info(`El servidor se encuentra en el puerto: ${PORT}`)
 });
+server.on('error', (error: any) => logger.error(`Error en el servidor ${error}`))

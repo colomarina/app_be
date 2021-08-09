@@ -1,7 +1,7 @@
 import { logger } from "../config/winston.config";
+const config = require('../config/config')
 
-require('dotenv').config()
-const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTHTOKEN);
+const client = require('twilio')(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTHTOKEN);
 
 const sendSMS = ({mensaje, para}: any) => client.messages.create({
   body: `${mensaje}`,

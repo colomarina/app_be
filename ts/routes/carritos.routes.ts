@@ -5,12 +5,28 @@ let routerCarrito = Router();
 
 // Rutas para Carrito
 
-routerCarrito.get("/carrito/:carrito_id", carritoController.getOne);
+class RouterCarrito {
+  controladorCarrito: any;
 
-routerCarrito.post("/carrito",carritoController.create);
+  constructor() {
+      this.controladorCarrito = carritoController;
+  }
 
-routerCarrito.put("/carrito/:carrito_id",carritoController.update);
+  start() {
+    routerCarrito.get("/cart/:carrito_id", carritoController.getOne);
+    
+    routerCarrito.post("/cart/add/:carrito_id",carritoController.add);
+    
+    routerCarrito.post("/cart/delete/:carrito_id",carritoController.delete);
 
-routerCarrito.post("/finalizarCompra", carritoController.finishBuying)
+    routerCarrito.post("/cart/submit/:carrito_id",carritoController.submit);
+    
+    // routerCarrito.put("/carrito/:carrito_id",carritoController.update);
+    
+    // routerCarrito.post("/finalizarCompra", carritoController.finishBuying)
+    return routerCarrito
+  }
+}
 
-export default routerCarrito;
+
+export default RouterCarrito;

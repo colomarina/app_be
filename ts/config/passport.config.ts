@@ -1,7 +1,8 @@
-require('dotenv').config()
 import passport from "passport";
 import { userFacebookModel } from '../db/models/userFacebook.model';
+import validate from "../middleware/validations";
 import { logger } from "./winston.config";
+const config = require('../config/config');
 const UserModel = require('../db/models/user');
 const localStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
@@ -10,12 +11,13 @@ const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 const strategyOptions = {
   usernameField: 'email',
-  passwordField: 'password'
+  passwordField: 'password',
+  passReqToCallback: true,
 };
 
 const strategyOptionsFacebook = {
-  clientID: process.env.FACEBOOK_CLIENT_ID,
-  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  clientID: config.FACEBOOK_CLIENT_ID,
+  clientSecret: config.FACEBOOK_CLIENT_SECRET,
   callbackURL: "http://localhost:8080/auth/facebook/callback",
   profileFields: ['id', 'displayName', 'email' , 'picture.type(large)'],
   scope: ["email"],
@@ -27,17 +29,21 @@ const strategyJWT = {
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
 };
 
-const signup = async (email: any, password: any, done: any) => {
+const signup = async (req: any, email: any, password: any, done: any) => {
+  const { passwordConfirm, nombreCompleto, celular, admin } = req.body;
+  // const x  = validate({ email, password, passwordConfirm, nombreCompleto, celular, admin })
+  // console.log(x);
   try {
-    const user = await UserModel.create({ email, password });
+    const user = await UserModel.create({ email, password, nombreCompleto, celular, admin });
     return done(null, user);
   } catch (error) {
+    console.log(error)
     logger.error(error)
-    done(error);
+    return done(error);
   }
 };
 
-const login = async (email: String, password: any, done: any) => {
+const login = async (req: any, email: String, password: any, done: any) => {
   try {
     const user = await UserModel.findOne({ email });
 

@@ -1,16 +1,16 @@
-require('dotenv').config()
 import MongoStore from "connect-mongo";
+const config = require('../config/config')
 
 export const sessionConfig = {
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL,
+    mongoUrl: config.MONGO_URL,
     mongoOptions: {
       useNewUrlParser: true,
       useUnifiedTopology: true
     },
     ttl: 600
   }),
-  secret: process.env.MONGO_SECRET_KEY || '',
+  secret: config.MONGO_SECRET_KEY || '',
   resave: false,
   saveUninitialized: false,
   rolling:false,

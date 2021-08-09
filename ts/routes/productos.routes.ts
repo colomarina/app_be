@@ -1,22 +1,27 @@
 import { Router } from "express";
+import passport from "passport";
 const productosController = require('../controller/productos.controller')
 
 let routerProductos = Router();
-
 // Rutas para Productos
-routerProductos.get("/productos", productosController.getAll);
-// POST
-routerProductos.post("/productos",productosController.create);
-// /productos/:producto_id
-routerProductos.get("/productos/:producto_id", productosController.getOne);
-routerProductos.put("/productos/:producto_id", productosController.update);
-routerProductos.delete("/productos/:producto_id", productosController.delete);
 
-// /productos/vista/?nombre=Agua
-// /productos/vista/?min_precio=1000&max_precio=3000
-routerProductos.get("/productos/vista", productosController.getWithFilters);
-// /productos/vista-test?cant=5
-routerProductos.get("/productos/vista-test", productosController.createRandom);
+class RouterProductos {
+  controladorProductos: any;
 
+  constructor() {
+      this.controladorProductos = productosController;
+  }
 
-export default routerProductos;
+  start() {
+      routerProductos.get('/productos', this.controladorProductos.getAll)
+      // routerProductos.get('/productos/:producto_id', this.controladorProductos.getOne)
+      routerProductos.get('/productos/:category', this.controladorProductos.getAll)
+      routerProductos.post('/productos', this.controladorProductos.create)
+      routerProductos.put('/productos/:producto_id', this.controladorProductos.update)
+      routerProductos.delete('/productos/:producto_id', this.controladorProductos.delete)
+
+      return routerProductos
+  }
+}
+
+export default RouterProductos;

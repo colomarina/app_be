@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../config/winston.config';
-import { crearCarrito, updateUser } from '../db/index.db';
+import model from '../db/index.db';
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 import { transporterEthereal, transporterGmail } from '../service/mail';
@@ -32,35 +32,16 @@ const enviarMailEthereal = (asunto: string, user: any) => {
   })
 }
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
-  const UpdateUser = req.body;
-  const user = req.user;
-  updateUser( user , UpdateUser)
-    .then(() => {
-      enviarMailEthereal('Nuevo Registro', UpdateUser)
-      crearCarrito(user)
-        .then(() => {
-          res.json({
-            message: 'Signup successful',
-            user: req.user
-          });
-        })
-        .catch((error) => {
-          logger.error(error)
-          res.json({
-            error: error
-          })
-        })
-    })
-    .catch((error) => {
-      logger.error(error)
-      res.json({
-        error: error
-      })
-    })
+const signup = async (req: Request, res: Response, next: NextFunction) => {
+  const { email, direccion } = req.body;
+  const user = await model?.traerUser(email);
+  const carritoCreated = await model?.crearCarrito(user, direccion) 
+  if ( user && carritoCreated ) {
+    return res.status(201).json(user);
+  }
 }
 
-const signup = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('login', async (err: any, user: any, info: any) => {
       try {
         if (err) {
@@ -75,7 +56,10 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
           { session: false },
           async (error: any) => {
             if (error) return next(error);
-            const body = { _id: user._id, email: user.email };
+            const body = { 
+              _id: user._id,
+              email: user.email
+            };
             const token = jwt.sign({ user: body }, 'TOP_SECRET');
             return res.json({ token });
           }

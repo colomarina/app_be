@@ -12,20 +12,279 @@
     }
   ],
   "paths": {
-    "/api/productosJSON": {
-      "get": {
-        "summary": "Devuelve una lista de Productos.",
-        "description": "Optional extended description in CommonMark or HTML.",
+    "/singup": {
+      "post": {
+        "summary": "Permite a los usuarios registrarse en la app",
+        "tags": [
+          "Sesion"
+        ],
+        "description": "se ingresa mail y contraseña",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "A JSON array of user names",
+            "description": "New User Data",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Singup successful"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "60bd5be8de7e1a1ed7f7bd6a"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "pirulito@gmail.com"
+                        }
+                      }
+                    }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Permite a los usuarios loguearse a la aplicacion",
+        "tags": [
+          "Sesion"
+        ],
+        "description": "Se envia email y contraseña y se devuelve un token para acceder a las rutas segurizadas",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwYmNmMTE4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/productos": {
+      "get": {
+        "summary": "Devuelve una lista de Productos.",
+        "tags": [
+          "Productos"
+        ],
+        "description": "Devuelve un array de objetos de tipo Producto",
+        "responses": {
+          "200": {
+            "description": "...",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Permite crear un producto",
+        "tags": [
+          "Productos"
+        ],
+        "description": "Se envia un Producto y se devuelve mensaje",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Producto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "...",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Created successful"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/productos/{producto_id}": {
+      "get": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Gets a user by ID.",
+        "description": "..",
+        "operationId": "getProductoById",
+        "parameters": [
+          {
+            "name": "producto_id",
+            "in": "path",
+            "description": "Producto ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Puts a Producto by ID.",
+        "description": "Modificar datos de un Producto por ID",
+        "operationId": "putProductoById",
+        "parameters": [
+          {
+            "name": "producto_id",
+            "in": "path",
+            "description": "Producto ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": {
+                    "type": "string",
+                    "description": "nombre del Producto",
+                    "example": "Gatorade"
+                  },
+                  "descripcion": {
+                    "type": "string",
+                    "description": "descripcion del Producto",
+                    "example": "Es una bebida energetica"
+                  },
+                  "codigo": {
+                    "type": "number",
+                    "description": "codigo del Producto",
+                    "example": 1234
+                  },
+                  "foto": {
+                    "type": "string",
+                    "description": "imagen del Producto",
+                    "example": "URL"
+                  },
+                  "precio": {
+                    "type": "number",
+                    "description": "precio del Producto",
+                    "example": 110
+                  },
+                  "stock": {
+                    "type": "number",
+                    "description": "stock del Producto",
+                    "example": 50
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Delete a Producto by ID.",
+        "description": "Eliminar un Producto por el ID",
+        "operationId": "deleteProductoById",
+        "parameters": [
+          {
+            "name": "producto_id",
+            "in": "path",
+            "description": "Producto ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Producto"
                 }
               }
             }
@@ -40,6 +299,78 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "mail del usuario",
+            "example": "pedro@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "contraseña del usuario.",
+            "example": "pedro123!"
+          },
+          "nombreCompleto": {
+            "type": "string",
+            "description": "Nombre completo del usuario.",
+            "example": "Pedro Ramirez"
+          },
+          "celular": {
+            "type": "string",
+            "description": "Numero de celular del usuario.",
+            "example": "2216408259"
+          },
+          "admin": {
+            "type": "boolean",
+            "description": "Si el usuario va a ser admin o no.",
+            "example": "false"
+          }
+        }
+      },
+      "Producto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "id del Producto",
+            "example": "608370b616ffc53b58ddee17"
+          },
+          "nombre": {
+            "type": "string",
+            "description": "nombre del Producto",
+            "example": "Gatorade"
+          },
+          "descripcion": {
+            "type": "string",
+            "description": "descripcion del Producto",
+            "example": "Es una bebida energetica"
+          },
+          "codigo": {
+            "type": "number",
+            "description": "codigo del Producto",
+            "example": 1234
+          },
+          "foto": {
+            "type": "string",
+            "description": "imagen del Producto",
+            "example": "URL"
+          },
+          "precio": {
+            "type": "number",
+            "description": "precio del Producto",
+            "example": 110
+          },
+          "stock": {
+            "type": "number",
+            "description": "stock del Producto",
+            "example": 50
+          }
+        }
       }
     }
   },

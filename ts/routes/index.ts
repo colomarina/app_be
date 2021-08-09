@@ -2,18 +2,22 @@ import express from 'express';
 import swaggerUi from "swagger-ui-express";
 const swaggerDocument = require('../server/openapi.json');
 const passport = require('passport');
+const upload = require("../middleware/upload")
 
 const router = express.Router();
-import routerProductos from "../routes/productos.routes";
+import RouterProductos from "../routes/productos.routes";
+import RouterCarrito from '../routes/carritos.routes';
 import routerSession from "../routes/session.routes";
-import routerForExercise from "../routes/forExercise.routes";
-import routerCarrito from './carritos.routes';
 
-router.use('/', routerSession);
-router.use('/api', passport.authenticate('jwt', { session: false }), routerProductos);
-router.use('/api', passport.authenticate('jwt', { session: false }), routerCarrito);
-router.use("/exercise", routerForExercise);
+const routerProducts = new RouterProductos()
+const routerCarts = new RouterCarrito()
+
+router.use('/api', routerSession);
+router.use('/api', routerProducts.start());
+router.use('/api', routerCarts.start());
+// router.use('/api', routerFotos.start())
 router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
 // Handle errors.
 router.use(function (err: any, req: any, res: any, next: any) {
   res.status(err.status || 500);

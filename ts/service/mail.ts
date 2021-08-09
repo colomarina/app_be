@@ -1,12 +1,12 @@
-require('dotenv').config()
 import nodemailer from 'nodemailer';
+const config = require('../config/config')
 
 const transporterEthereal = nodemailer.createTransport({
   host: 'smtp.ethereal.email',
   port: 587,
   auth: {
-    user: process.env.MAIL_ETHEREAL,
-    pass: process.env.MAIL_ETHEREAL_PASSWORD
+    user: config.MAIL_ETHEREAL,
+    pass: config.MAIL_ETHEREAL_PASSWORD
   }
 });
 
@@ -14,8 +14,8 @@ const transporterEthereal = nodemailer.createTransport({
 const transporterGmail = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.MAIL_GMAIL,
-    pass: process.env.MAIL_GMAIL_PASSWORD
+    user: config.MAIL_GMAIL,
+    pass: config.MAIL_GMAIL_PASSWORD
   }
 });
 
