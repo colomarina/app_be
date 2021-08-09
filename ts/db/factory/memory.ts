@@ -52,6 +52,9 @@ export default class persistenciaMemory {
   traerUser = async () => {
     return this.personas
   }
+  traerUserById = async () => {
+    return this.personas
+  }
   /* CARRITO */
   crearCarrito = async () => {
     return this.personas
@@ -66,10 +69,22 @@ export default class persistenciaMemory {
   traerCarrito = async () => {
     return this.personas
   }
+  vaciarProductosDelCarrito = async () => {
+    return this.personas
+  }
 
   /* ORDENES */
 
   crearOrden = async () => {
     return this.personas
   }
+  traerOrdenesByUserId = async () => {
+    return this.personas
+  }
+  traerOrdenesById = async () => {
+    return this.personas
+  }
+  // crearOrden = async () => {
+  //   return this.personas
+  // }
 }

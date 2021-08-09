@@ -1,9 +1,5 @@
 import { Request, Response } from 'express';
-import { mensaje_error, usuario } from "../routes/constantes";
-import { logger } from '../config/winston.config';
-import { carritoModel } from '../db/models/carts.model';
 import { enviarMailEthereal } from '../service/mail';
-import { sendSMS, sendWhatsApp } from '../service/message';
 import model from '../db/index.db'
 
 module.exports = {
@@ -83,8 +79,43 @@ module.exports = {
         if (ordenGenerada.errorType) {
           return res.status(400).json({ message: 'Hubo un incoveniente al generar la nueva Orden' });
         } else {
-          // limpiar carrito
-          // enviar mail
+          const vaciarCarrito = await model?.vaciarProductosDelCarrito(idCart)
+          const datosUsuario: any = await model?.traerUserById(ordenGenerada.userId)
+          const mail = {
+            a: datosUsuario.email,
+            asunto: 'Solicitud de Orden',
+            html: `
+            <h1>¡Hola ${datosUsuario.nombreCompleto}!</h1><br>
+            <div>
+              <h3>Total de la orden: ${ordenGenerada.totalOrder}</h3><br>
+              <h3>Tu orden:</h3><br>
+              <table>
+                <tbody>
+                ${ordenGenerada.items.forEach((item: any) => {
+                  return `
+                    <tr>
+                      <td>Identificacion del Producto: ${item.productId}</td>
+                      <td>Identificacion del Producto: ${item.cantidad}</td>
+                      <td>Identificacion del Producto: ${item.precio}</td>
+                    </tr>
+                  `
+                })}
+                </tbody>
+              </table>
+            </div><br>
+            <div>
+              <h3>Direccion de entrega:</h3><br>
+              <p>
+                Calle: ${ordenGenerada.direccion.calle}<br>
+                Altura: ${ordenGenerada.direccion.altura}<br>
+                Codigo Postal: ${ordenGenerada.direccion.codigoPostal}<br>
+                Piso: ${ordenGenerada.direccion.piso}<br>
+                Departamento: ${ordenGenerada.direccion.departamento}<br>
+              </p>
+            </div>
+            `
+          }
+          enviarMailEthereal(mail)
           return res.status(201).json(ordenGenerada);
         }
       }

@@ -21,9 +21,9 @@ const transporterGmail = nodemailer.createTransport({
 
 const enviarMailEthereal = ({ a, asunto, html}: any) => {
   transporterEthereal.sendMail({
-    from: 'Servidor Node.js',
+    from: 'Servidor APP_BE',
     to: a,
-    subject: `Operacion ${asunto}`,
+    subject: asunto,
     html: html
   }, (err, info) => {
     if (err) {

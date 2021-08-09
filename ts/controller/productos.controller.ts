@@ -23,23 +23,6 @@ module.exports = {
     }
   },
 
-  // getOne: async (req: Request, res: Response) => {
-  //   // Listar 1 producto x su id
-  //   const producto = await model?.traerProducto(req.params.producto_id)
-  //   try {
-  //     if (producto) {
-  //       res.json(producto)
-  //     } else {
-  //       res.json({ Error: 'Producto inexistente' })
-  //     }
-  //   } catch (error: any) {
-  //     mensaje_error.error = `Error en el ${error.path}`;
-  //     mensaje_error.descripcion = `El ${error.path} ${error.value} tiene ciertas inconsistencias`;
-  //     logger.error(error)
-  //     res.json(mensaje_error);
-  //   }
-  // },
-
   create: async (req: Request, res: Response) => {
     //Agregar un producto al listado
     if (usuario.administrador) {
@@ -113,33 +96,3 @@ module.exports = {
 
   }
 }
-
-// class ControladorProductos {
-//   modelProducto: any;
-
-//   constructor() {
-//     this.modelProducto = model
-//   }
-
-//   async getAll() {
-//     try {
-//         const productos = await this.modelProducto?.traerProductos()
-//         return productos
-//     } catch (err) {
-//         throw new Error()
-//     }
-// }
-//   // async getAll (req: Request, res: Response) {
-//   //   return 1;
-//   //   // try {
-//   //   //   if (productos) {
-//   //   //     return res.json(productos)
-//   //   //   }
-//   //   // } catch (error) {
-//   //   //   logger.error(error)
-//   //   //   return res.send(error);
-//   //   // }
-//   // }
-// }
-
-// export default ControladorProductos;

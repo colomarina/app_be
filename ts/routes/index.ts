@@ -7,14 +7,17 @@ const upload = require("../middleware/upload")
 const router = express.Router();
 import RouterProductos from "../routes/productos.routes";
 import RouterCarrito from '../routes/carritos.routes';
+import RouterOrdenes from '../routes/orders.routes';
 import routerSession from "../routes/session.routes";
 
 const routerProducts = new RouterProductos()
 const routerCarts = new RouterCarrito()
+const routerOrders = new RouterOrdenes()
 
 router.use('/api', routerSession);
 router.use('/api', routerProducts.start());
-router.use('/api', routerCarts.start());
+router.use('/api', passport.authenticate('jwt', { session: false }), routerCarts.start());
+router.use('/api', passport.authenticate('jwt', { session: false }), routerOrders.start());
 // router.use('/api', routerFotos.start())
 router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 

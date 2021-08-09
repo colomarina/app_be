@@ -74,6 +74,10 @@ export default class peristenciaFileSystem {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }
+  traerUserById = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
   /* CARRITO */
   crearCarrito = async () => {
     let datos = await fs.promises.readFile('datos.txt')
@@ -91,6 +95,10 @@ export default class peristenciaFileSystem {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }
+  vaciarProductosDelCarrito = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
 
   /* ORDENES */
 
@@ -98,5 +106,17 @@ export default class peristenciaFileSystem {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }
+  traerOrdenesByUserId = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
+  traerOrdenesById = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
+  // crearOrden = async () => {
+  //   let datos = await fs.promises.readFile('datos.txt')
+  //   return datos
+  // }
 
 }

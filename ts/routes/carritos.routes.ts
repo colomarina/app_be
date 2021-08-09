@@ -21,9 +21,6 @@ class RouterCarrito {
 
     routerCarrito.post("/cart/submit/:carrito_id",carritoController.submit);
     
-    // routerCarrito.put("/carrito/:carrito_id",carritoController.update);
-    
-    // routerCarrito.post("/finalizarCompra", carritoController.finishBuying)
     return routerCarrito
   }
 }

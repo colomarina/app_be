@@ -117,9 +117,11 @@ export default class persistenciaMongo {
       }
     })
   }
-  // traerUser = async (id: string): Promise<string> => {
-  //   return await UserModel.findById(id);
-  // }
+
+  traerUserById = async (id: string): Promise<string> => {
+    return await UserModel.findById(id);
+  }
+
   traerUser = async (email: string): Promise<string> => {
     return await UserModel.findOne({ email: email });
   }
@@ -133,6 +135,33 @@ export default class persistenciaMongo {
     }
     const carritoCreated = new carritoModel(carritoVacio)
     return await carritoCreated.save()
+  }
+
+  traerCarrito = async (id: string): Promise<object> => {
+    try {
+      return await carritoModel.findById(id);
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
+  }
+  
+  vaciarProductosDelCarrito = async (idCart: string): Promise<object> => {
+    try {
+      const queryCart = { _id: idCart };
+      const updateDocumentCart = {
+        $set: {
+          productos: []
+        }
+      }
+      const carritoVaciado = await carritoModel.updateOne(queryCart, updateDocumentCart);
+      return carritoVaciado
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
   }
 
   agregarProductoEnCarrito = async (idCart: string, { productoId, cantidad, stock, precio }: any): Promise<object> => {
@@ -201,21 +230,11 @@ export default class persistenciaMongo {
     }
   }
 
-  traerCarrito = async (id: string): Promise<object> => {
-    try {
-      return await carritoModel.findById(id);
-    } catch (error: any) {
-      return {
-        errorType: error.kind
-      }
-    }
-  }
-
   /* ORDENES */
 
   crearOrden = async (orden: any): Promise<object> => {
     try {
-      const totalPrice = orden.productos.reduce((total: any, producto: any) => total + producto.precio, 0);
+      const totalPrice = orden.productos.reduce((total: any, producto: any) => total + (producto.precio * producto.cantidad), 0);
       const items = orden.productos.map((prod: any) => {
         return {
           productId: prod.productoId,
@@ -238,6 +257,27 @@ export default class persistenciaMongo {
       }
     }
   }
+
+  traerOrdenesByUserId = async (id: string): Promise<object> => {
+    try {
+      return await orderModel.find({userId: id});
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
+  }
+  
+  traerOrdenesById = async (id: string): Promise<object> => {
+    try {
+      return await orderModel.findById(id);
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
+  }
+
 }
 
 
