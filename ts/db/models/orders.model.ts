@@ -19,6 +19,7 @@ const OrderSchema = new mongoose.Schema({
     piso: { type: String },
     departamento: { type: String },
   },
+  estado: { type: String },
   totalOrder: { type: Number, required: true },
 })
 

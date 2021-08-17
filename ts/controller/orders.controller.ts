@@ -27,13 +27,33 @@ module.exports = {
   },
   
   completeOrder: async (req: Request, res: Response) => {
-    const cart: any = await model?.traerCarrito(req.params.carrito_id);
-    if (cart.errorType) {
+    const { orderId } = req.body;
+    const orderComplete: any = await model?.traerOrdenesById(orderId);
+    if (orderComplete.errorType) {
       res.status(400).json({
-        message: `No existe el carrito con ID: ${req.params.carrito_id}`
+        message: `No existe la Orden con ID: ${orderId}`
       });
     } else {
-      res.status(200).json(cart)
+      if (orderComplete.estado !== 'Generada') {
+        res.status(400).json({
+          message: `No existe la Orden con ID: ${orderId}`
+        });
+      } else {
+        const ordenModificada = await model?.modificarOrden(orderId)
+        const datosUsuario: any = await model?.traerUserById(orderComplete.userId)
+        const mail = {
+          a: datosUsuario.email,
+          asunto: 'Orden Completada',
+          html: `
+          <h1>¡Hola ${datosUsuario.nombreCompleto}!</h1><br>
+          <div>
+            <h3>Tu orden fue completada con exito!</h3><br>
+          </div><br>
+          `
+        }
+        enviarMailEthereal(mail)
+        res.status(200).json(ordenModificada)
+      }
     }
   },
 

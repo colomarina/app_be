@@ -48,15 +48,14 @@ module.exports = {
       if (cantidad <= existeProducto.cantidad) {
         const eliminarProducto = {
           eliminar: (cantidad === existeProducto.cantidad) ,
-          producto: existeProducto
+          productos: productoEliminadoCarrito.productos.filter((p: any) => p.productoId !== productoId)
         }
         const cart: any = await model?.eliminarProductoEnCarrito(idCart, { productoId, cantidad }, eliminarProducto);
-        console.log(cart)
         if (cart.errorType) {
-          return res.status(400).json({ message: 'Hubo un incoveniente al agregar el producto al carrito' });
+          return res.status(400).json({ message: 'Hubo un incoveniente al eliminar el producto al carrito' });
         }
-        // const carrito = await model?.traerCarrito(idCart);
-        return res.status(200).json({message: 'Nose'});
+        const carrito = await model?.traerCarrito(idCart);
+        return res.status(200).json(carrito);
       } else {
         return res.status(400).json({ message: 'La Cantidad solicitada es invalida' });
       }

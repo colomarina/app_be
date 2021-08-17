@@ -17,9 +17,9 @@ const routerOrders = new RouterOrdenes()
 router.use('/api', routerSession);
 router.use('/api', routerProducts.start());
 router.use('/api', passport.authenticate('jwt', { session: false }), routerCarts.start());
-router.use('/api', passport.authenticate('jwt', { session: false }), routerOrders.start());
+router.use('/api', passport.authenticate('jwt', { session: false }),routerOrders.start());
 // router.use('/api', routerFotos.start())
-router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+// router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // Handle errors.
 router.use(function (err: any, req: any, res: any, next: any) {

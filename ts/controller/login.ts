@@ -61,7 +61,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
               email: user.email
             };
             const token = jwt.sign({ user: body }, 'TOP_SECRET');
-            return res.json({ token });
+            return res.json({ token, user: body });
           }
         );
       } catch (error) {

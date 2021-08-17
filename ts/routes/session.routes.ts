@@ -9,13 +9,11 @@ routerSession.post("/user/login", login);
 
 routerSession.post("/user/logout", logout);
 
-// routerSession.get("/profile", passport.authenticate('jwt', { session: false }), getProfile );
-
 // LOGIN CON FACEBOOK
-// routerSession.get("/auth/facebook", passport.authenticate('facebook'));
+routerSession.get("/auth/facebook", passport.authenticate('facebook'));
 
-// routerSession.get("/auth/facebook/callback", passport.authenticate('facebook', {
-//   failureRedirect: '/login'
-// }), loginFacebook);
+routerSession.get("/auth/facebook/callback", passport.authenticate('facebook', {
+  failureRedirect: '/login'
+}), loginFacebook);
 
 export default routerSession;

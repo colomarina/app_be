@@ -11,14 +11,18 @@ module.exports = {
       if (productos) {
         res.json(productos)
       } else {
-        res.sendStatus(400);
+        res.status(400).json({
+        message: `Hubo un error en base`
+      });
       }
     } else {
       const productos = await model?.traerProductos()
       if (productos) {
         res.json(productos)
       } else {
-        res.sendStatus(400);
+        res.status(400).json({
+        message: `Hubo un error en base`
+      });
       }
     }
   },
@@ -34,22 +38,23 @@ module.exports = {
         req.body.stock === undefined ||
         req.body.foto === undefined
       ) {
-        mensaje_error.error = "1";
-        mensaje_error.descripcion = "Debe rellenar todos los campos...";
-        // logger.error(mensaje_error)
-        res.sendStatus(400);
+        res.status(400).json({
+          message: "Hay inconsistencias en el Producto",
+        });
       } else {
         const productoCreado = await model?.agregarProducto(req.body)
         if (productoCreado) {
           res.sendStatus(201)
         } else {
-          //Hubo error al actualizar el Producto
-          res.sendStatus(400)
+          res.status(403).json({
+            message: "Hubo error al crear el Producto",
+          });
         }
       }
     } else {
-      // Acceso denegado , Se necesita rol Administrador
-      res.sendStatus(403);
+      res.status(403).json({
+        message: "Acceso denegado , Se necesita rol Administrador",
+      });
     }
   },
 
@@ -64,18 +69,19 @@ module.exports = {
         if (productoActualizado) {
           res.sendStatus(200)
         } else {
-          //Hubo error al actualizar el Producto
-          res.sendStatus(400)
+          res.status(400).json({
+            message: "Hubo error al actualizar el Producto",
+          });
         }
       } catch (error: any) {
-        mensaje_error.error = `Error en el ${error.path}`;
-        mensaje_error.descripcion = `El ${error.path} ${error.value} tiene ciertas inconsistencias`;
-        logger.error(mensaje_error)
-        res.sendStatus(400);
+        res.status(400).json({
+          message: "Hay ciertas inconsistencias en el producto a actualizar",
+        });
       }
     } else {
-      // Acceso denegado , Se necesita rol Administrador
-      res.sendStatus(403);
+      res.status(403).json({
+        message: "Acceso denegado , Se necesita rol Administrador",
+      });
     }
   },
 
@@ -86,12 +92,14 @@ module.exports = {
       if (productoEliminado) {
         res.sendStatus(200)
       } else {
-        //Hubo error al eliminar el Producto
-        res.sendStatus(400)
+        res.status(400).json({
+          message: "No se pudo eliminar el producto",
+        });
       }
     } else {
-      // Acceso denegado , Se necesita rol Administrador
-      res.sendStatus(403);
+      res.status(403).json({
+        message: "Acceso denegado , Se necesita rol Administrador",
+      });
     }
 
   }

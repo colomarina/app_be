@@ -48,7 +48,7 @@ export default class peristenciaFileSystem {
     return datos
   }
   /* MENSAJES */
-  traerMensajes = async () => {
+  traerMensajesDe = async () => {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }
@@ -95,6 +95,10 @@ export default class peristenciaFileSystem {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }
+  traerCarritoByUserId = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
   vaciarProductosDelCarrito = async () => {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
@@ -110,7 +114,15 @@ export default class peristenciaFileSystem {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }
+  traerUltimaOrdenByUserId = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
   traerOrdenesById = async () => {
+    let datos = await fs.promises.readFile('datos.txt')
+    return datos
+  }
+  modificarOrden = async () => {
     let datos = await fs.promises.readFile('datos.txt')
     return datos
   }

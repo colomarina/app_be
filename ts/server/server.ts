@@ -4,12 +4,10 @@ import mainRouter from "../routes/index";
 import session from 'express-session';
 import cookieParser from "cookie-parser";
 import path = require("path");
-import { fechayhora } from "../routes/constantes";
-import model from '../db/index.db'
 import { inicializarPassport, sessionPassport } from "../config/passport.config";
 import { sessionConfig } from "../config/session.config";
 import { logger } from "../config/winston.config";
-import { sendSMS } from "../service/message";
+import controllerSocket from "../controller/socket.controller";
 
 const cors = require('cors')
 const config = require('../config/config')
@@ -27,52 +25,13 @@ app.use(inicializarPassport);
 app.use(sessionPassport);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
+app.use(express.static('public'))
+app.get('/', (req, res) => {
+  res.render('pages/index')
+})
 app.use('/', mainRouter)
 
-
-io.on("connection", (socket: any) => {
-  logger.info(`ID: ${socket.id}`);
-  model?.traerMensajes()
-    .then((mensajes: any) => {
-      mensajes.length === 0
-        ? logger.info("No hay mensajes en la DB")
-        : socket.emit("mensajes", mensajes);
-    })
-    .catch((error: any) => {
-      logger.error(error)
-    });
-  socket.on("mensaje", (messag: any) => {
-    const { mail, nombre, apellido, edad, alias, avatar, message } = messag;
-    const mensaje = {
-      mail: mail,
-      nombre: nombre,
-      apellido: apellido,
-      edad: edad,
-      alias: alias,
-      avatar: avatar,
-      dateandhour: fechayhora(),
-      message: message
-    };
-    if (message.includes('administrador')) {
-      sendSMS(message)
-    }
-    model?.agregarMensaje(mensaje)
-      .then(() => {
-        model?.traerMensajes()
-          .then((mensajes: any) => {
-            mensajes.length === 0
-              ? logger.info("No hay mensajes")
-              : io.emit("mensajes", mensajes);
-          })
-          .catch((error: any) => {
-            logger.error(error)
-          });
-      })
-      .catch((error: any) => {
-        logger.error(error)
-      });
-  });
-});
+io.on('connection', controllerSocket)
 
 
 declare module "express-session" {

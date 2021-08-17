@@ -5,6 +5,7 @@ import { productoModel } from '../models/product.model';
 import { carritoModel } from '../models/carts.model';
 import { logger } from '../../config/winston.config';
 import { orderModel } from '../models/orders.model';
+import { MessageType, ProductoType } from '../../types/types';
 const config = require('../../config/config');
 const UserModel = require('../models/user');
 
@@ -38,17 +39,19 @@ export default class persistenciaMongo {
   traerProducto = async (id: string): Promise<string> => {
     return await productoModel.findById(id);
   }
-  agregarProducto = async (producto: any): Promise<string> => {
+  agregarProducto = async (producto: ProductoType): Promise<object> => {
     try {
       const productoSaved = new productoModel(producto)
       const resultado = await productoSaved.save()
       return resultado
-    } catch (error) {
-      logger.error(error)
-      return '';
+    } catch (error: any) {
+      return {
+        errorType: error.kind,
+        errorMessage: 'Producto no agregado'
+      }
     }
   }
-  actualizarProducto = async (id: string, producto: any): Promise<string> => {
+  actualizarProducto = async (id: string, producto: any): Promise<object> => {
     try {
       const resultado = await productoModel.findByIdAndUpdate({
         _id: id
@@ -56,18 +59,22 @@ export default class persistenciaMongo {
         $set: producto
       });
       return resultado
-    } catch (error) {
-      logger.error(error)
-      return '';
+    } catch (error: any) {
+      return {
+        errorType: error.kind,
+        errorMessage: 'Producto no actualizado'
+      }
     }
   }
-  eliminarProducto = async (id: string): Promise<string> => {
+  eliminarProducto = async (id: string): Promise<object> => {
     try {
       const resultado = await productoModel.findByIdAndDelete(id);
       return resultado
-    } catch (error) {
-      logger.error(error)
-      return '';
+    } catch (error: any) {
+      return {
+        errorType: error.kind,
+        errorMessage: 'Id no encontrado'
+      }
     }
   }
 
@@ -88,12 +95,12 @@ export default class persistenciaMongo {
   }
 
   /* MENSAJES */
-  traerMensajes = async (): Promise<string> => {
-    return await messageModel.find({});
+  traerMensajesDe = async (id: string): Promise<string> => {
+    return await messageModel.find({ userId: id });
   }
-  agregarMensaje = async (mensaje: any): Promise<string> => {
-    const mensajeSaved = new messageModel(mensaje)
-    return await mensajeSaved.save()
+  agregarMensaje = async (message: MessageType): Promise<string> => {
+    const messageSaved = new messageModel(message)
+    return await messageSaved.save()
   }
 
   /* PASSWORD HASH */
@@ -118,8 +125,16 @@ export default class persistenciaMongo {
     })
   }
 
-  traerUserById = async (id: string): Promise<string> => {
-    return await UserModel.findById(id);
+  traerUserById = async (id: string): Promise<object> => {
+    try {
+      const user = await UserModel.findById(id);
+      return user
+    } catch (error: any) {
+      return {
+        errorType: error.kind,
+        errorMessage: 'Usuario no encontrado'
+      }
+    }
   }
 
   traerUser = async (email: string): Promise<string> => {
@@ -146,7 +161,17 @@ export default class persistenciaMongo {
       }
     }
   }
-  
+
+  traerCarritoByUserId = async (id: string): Promise<object> => {
+    try {
+      return await carritoModel.find({ userId: id });
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
+  }
+
   vaciarProductosDelCarrito = async (idCart: string): Promise<object> => {
     try {
       const queryCart = { _id: idCart };
@@ -206,16 +231,22 @@ export default class persistenciaMongo {
         // Sacar el producto del array
         const queryCart = { _id: idCart };
         const updateDocumentCart = {
-          $pull: {
-            productos: {
-              $elemMatch: eliminarProducto.producto
-            }
+          $set: {
+            productos: eliminarProducto.productos
           }
         }
         const productoEliminado = await carritoModel.updateOne(queryCart, updateDocumentCart);
-        console.log(productoEliminado)
+        const { stock } = await productoModel.findById(productoId);
+        const queryProduct = { _id: productoId };
+        const nuevoStockProducto = stock + cantidad;
+        const updateDocumentProducto = {
+          $set: {
+            stock: nuevoStockProducto
+          }
+        }
+        const agregarStockProducto = await productoModel.updateOne(queryProduct, updateDocumentProducto);
         return {
-          message: 'Fue eliminado?'
+          productoEliminado
         }
       } else {
         return {
@@ -246,6 +277,7 @@ export default class persistenciaMongo {
         userId: orden.userId,
         items: items,
         direccion: orden.direccion,
+        estado: 'Generada',
         totalOrder: totalPrice
       }
       const ordenSaved = new orderModel(nuevaOrden)
@@ -260,17 +292,44 @@ export default class persistenciaMongo {
 
   traerOrdenesByUserId = async (id: string): Promise<object> => {
     try {
-      return await orderModel.find({userId: id});
+      return await orderModel.find({ userId: id });
     } catch (error: any) {
       return {
         errorType: error.kind
       }
     }
   }
-  
+
+  traerUltimaOrdenByUserId = async (id: string): Promise<object> => {
+    try {
+      return await orderModel.find({ userId: id }).sort({ $natural: -1 }).limit(1);
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
+  }
+
   traerOrdenesById = async (id: string): Promise<object> => {
     try {
       return await orderModel.findById(id);
+    } catch (error: any) {
+      return {
+        errorType: error.kind
+      }
+    }
+  }
+
+  modificarOrden = async (id: string): Promise<object> => {
+    try {
+      const queryOrder = { _id: id };
+      const updateDocumentOrder = {
+        $set: {
+          estado: 'Completada',
+        }
+      }
+      const modificarOrden = await orderModel.updateOne(queryOrder, updateDocumentOrder);
+      return modificarOrden;
     } catch (error: any) {
       return {
         errorType: error.kind
