@@ -1,4 +1,5 @@
 import passport from "passport";
+import { Request, Response, NextFunction } from 'express';
 import { userFacebookModel } from '../db/models/userFacebook.model';
 import validate from "../middleware/validations";
 import { logger } from "./winston.config";
@@ -31,13 +32,13 @@ const strategyJWT = {
 
 const signup = async (req: any, email: any, password: any, done: any) => {
   const { passwordConfirm, nombreCompleto, celular, admin } = req.body;
-  // const x  = validate({ email, password, passwordConfirm, nombreCompleto, celular, admin })
-  // console.log(x);
   try {
-    const user = await UserModel.create({ email, password, nombreCompleto, celular, admin });
-    return done(null, user);
+    if (password === passwordConfirm) {
+      const user = await UserModel.create({ email, password, nombreCompleto, celular, admin });
+      return done(null, user);
+    }
+    throw new Error('Las contraseñas son diferentes')
   } catch (error) {
-    console.log(error)
     logger.error(error)
     return done(error);
   }

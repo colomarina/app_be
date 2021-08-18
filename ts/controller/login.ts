@@ -34,6 +34,7 @@ const enviarMailEthereal = (asunto: string, user: any) => {
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   const { email, direccion } = req.body;
+  console.log(req.body)
   const user = await model?.traerUser(email);
   const carritoCreated = await model?.crearCarrito(user, direccion) 
   if ( user && carritoCreated ) {
